@@ -1,0 +1,15 @@
+.container {
+  height: 4rem;
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.container > form {
+  /* height: 4rem; */
+}
+
+.container > form > button[type='submit'] {
+  margin-left: 0.5rem;
+}

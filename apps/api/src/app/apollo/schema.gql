@@ -1,0 +1,56 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Image {
+  id: ID!
+  width: Int!
+  height: Int!
+  description: String
+  author: String!
+  url: String!
+  link: String!
+  likesCount: Int
+  likedBy: [User!]!
+}
+
+type User {
+  id: ID!
+  name: String!
+}
+
+type UserAuth {
+  user: User!
+  token: String!
+}
+
+type ImageSearchResult {
+  total: Int!
+  total_pages: Int!
+  results: [Image!]!
+}
+
+type Query {
+  ping: String!
+  me: User!
+  getImages(page: Int): ImageSearchResult!
+  search(query: String!, page: Int): ImageSearchResult!
+}
+
+type Mutation {
+  register(data: RegisterInput!): UserAuth!
+  login(data: LoginInput!): UserAuth!
+  like(imageId: ID!): Image!
+  unlike(imageId: ID!): Image!
+}
+
+input RegisterInput {
+  email: String!
+  name: String!
+  password: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}

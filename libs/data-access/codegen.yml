@@ -1,0 +1,15 @@
+overwrite: true
+schema: 'apps/api/src/app/apollo/schema.gql'
+generates:
+  libs/data-access/src/lib/generated/generated.tsx:
+    documents: 'libs/data-access/src/lib/**/*.gql'
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'
+    config:
+      withHooks: true
+      withComponent: false
+      withHOC: false
+      scalars:
+        DateTime: string

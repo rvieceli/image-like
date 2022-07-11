@@ -1,0 +1,19 @@
+query getImages($page: Int) {
+  getImages(page: $page) {
+    total
+    total_pages
+    results {
+      id
+      author
+      url
+      link
+      height
+      width
+      likesCount
+      likedBy {
+        id
+        name
+      }
+    }
+  }
+}

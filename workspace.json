@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "projects": {
+    "api": "apps/api",
+    "data-access": "libs/data-access",
+    "shared-types": "libs/shared-types",
+    "web": "apps/web"
+  }
+}

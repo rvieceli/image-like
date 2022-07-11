@@ -1,0 +1,15 @@
+mutation like($imageId: ID!) {
+  like(imageId: $imageId) {
+    id
+    author
+    url
+    link
+    height
+    width
+    likesCount
+    likedBy {
+      id
+      name
+    }
+  }
+}
