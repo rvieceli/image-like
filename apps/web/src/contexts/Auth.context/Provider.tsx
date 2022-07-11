@@ -2,20 +2,27 @@ import { ReactNode, useEffect, useState } from 'react';
 
 import Router from 'next/router';
 
-import { useLoginMutation, useMeQuery, User } from '@image-like/data-access';
+import {
+  useLoginMutation,
+  useMeQuery,
+  User,
+  useRegisterMutation,
+} from '@image-like/data-access';
 
 import { getAccessToken, saveJwtToken } from '../../services/cookies';
 import { browserSignOut } from './browserSignOut';
 import { authChannel } from './Channel';
-import { AuthContext, SignInCredentials } from './Context';
+import { AuthContext, SignInCredentials, SignUpCredentials } from './Context';
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const [isAuthModalOpen, setAuthModalOpen] = useState(false);
   const [login] = useLoginMutation();
-  const { data } = useMeQuery({ skip: !getAccessToken() });
+  const [register] = useRegisterMutation();
+  const { data, refetch } = useMeQuery({ skip: !getAccessToken() });
 
   useEffect(() => {
     authChannel.onmessage = () => document.location.reload();
@@ -31,6 +38,31 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       saveJwtToken(data.login.token);
 
+      refetch();
+
+      setAuthModalOpen(false);
+
+      authChannel.postMessage('SIGN_IN');
+    } catch (err) {
+      console.log(err);
+      alert('Email or password invalid');
+    }
+  };
+
+  const signUp = async (credentials: SignUpCredentials) => {
+    try {
+      const { data } = await register({
+        variables: {
+          data: credentials,
+        },
+      });
+
+      saveJwtToken(data.register.token);
+
+      refetch();
+
+      setAuthModalOpen(false);
+
       authChannel.postMessage('SIGN_IN');
     } catch (err) {
       console.log(err);
@@ -43,8 +75,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       value={{
         isAuthenticated: Boolean(data?.me),
         signIn,
+        signUp,
         user: data?.me,
         signOut: browserSignOut,
+        isAuthModalOpen,
+        openAuthModal: () => setAuthModalOpen(true),
+        closeAuthModal: () => setAuthModalOpen(false),
       }}
     >
       {children}

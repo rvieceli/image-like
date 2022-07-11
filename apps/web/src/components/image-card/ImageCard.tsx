@@ -16,7 +16,7 @@ interface ImageCardProps {
 export const ImageCard = ({ image }: ImageCardProps) => {
   const [like] = useLikeMutation();
   const [unlike] = useUnlikeMutation();
-  const { user: loggedUser } = useAuth();
+  const { user: loggedUser, isAuthenticated, openAuthModal } = useAuth();
 
   const iLike = useMemo(
     () => image.likedBy.some((user) => user.id === loggedUser?.id),
@@ -24,6 +24,10 @@ export const ImageCard = ({ image }: ImageCardProps) => {
   );
 
   const handleLike = () => {
+    if (!isAuthenticated) {
+      return openAuthModal();
+    }
+
     if (iLike) {
       return unlike({
         variables: {
@@ -43,7 +47,7 @@ export const ImageCard = ({ image }: ImageCardProps) => {
       <img src={image.url} style={{ width: '100%' }} />
       <footer className={styles.footer}>
         <a href={image.link} target="_blank" rel="noopener noreferrer">
-          Open in Unsplash
+          unsplash 🔗
         </a>
 
         <button onClick={handleLike}>

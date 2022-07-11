@@ -6,7 +6,7 @@ interface HeaderProps {
 }
 
 export const Header = ({ doSearch }: HeaderProps) => {
-  const { isAuthenticated, signOut } = useAuth();
+  const { isAuthenticated, user, signOut, openAuthModal } = useAuth();
 
   return (
     <header className={styles.container}>
@@ -19,10 +19,14 @@ export const Header = ({ doSearch }: HeaderProps) => {
         <input id="search" name="search" type="text" placeholder="search" />
         <button type="submit">search</button>
       </form>
+
       {isAuthenticated ? (
-        <button onClick={signOut}>logout</button>
+        <div className={styles['logged-in']}>
+          <span>Hi, {user.name}</span>
+          <button onClick={signOut}>logout</button>
+        </div>
       ) : (
-        <button>Login</button>
+        <button onClick={openAuthModal}>Login</button>
       )}
     </header>
   );
