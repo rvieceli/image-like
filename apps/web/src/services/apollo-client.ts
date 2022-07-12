@@ -30,6 +30,42 @@ const client = new ApolloClient({
           },
         },
       },
+      Query: {
+        fields: {
+          search: {
+            keyArgs: ['query'],
+            merge: (existing = {}, incoming = {}) => {
+              const existingResults = existing.results;
+              const incomingResults = incoming.results;
+
+              if (incomingResults) {
+                return {
+                  ...incoming,
+                  results: [...(existingResults || []), ...incomingResults],
+                };
+              }
+
+              return existing;
+            },
+          },
+          getImages: {
+            keyArgs: [],
+            merge: (existing = {}, incoming = {}) => {
+              const existingResults = existing.results;
+              const incomingResults = incoming.results;
+              console.log(existingResults, incomingResults);
+              if (incomingResults) {
+                return {
+                  ...incoming,
+                  results: [...(existingResults || []), ...incomingResults],
+                };
+              }
+
+              return existing;
+            },
+          },
+        },
+      },
     },
   }),
 });

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import type { NextPage } from 'next';
 
@@ -7,8 +7,11 @@ import Masonry from 'react-masonry-css';
 
 import { Header } from '../components/header/Header';
 import { ImageCard } from '../components/image-card/ImageCard';
+import styles from './index.module.css';
 
 const Home: NextPage = () => {
+  const [searchPage, setSearchPage] = useState(1);
+  const [likedPage, setLikedPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const search = useSearchQuery({
     variables: {
@@ -16,7 +19,7 @@ const Home: NextPage = () => {
     },
     skip: !searchQuery,
   });
-  const { data: likedImages } = useGetImagesQuery();
+  const likedImages = useGetImagesQuery();
 
   const renderImages = () => {
     if (searchQuery) {
@@ -25,10 +28,40 @@ const Home: NextPage = () => {
       ));
     }
 
-    return likedImages?.getImages.results.map((image) => (
+    return likedImages.data?.getImages.results.map((image) => (
       <ImageCard key={image.id} image={image} />
     ));
   };
+
+  const handleLoadMore = () => {
+    if (searchQuery) {
+      search.fetchMore({
+        variables: {
+          page: searchPage + 1,
+        },
+      });
+      setSearchPage(searchPage + 1);
+    }
+    likedImages.fetchMore({
+      variables: {
+        page: likedPage + 1,
+      },
+    });
+    setLikedPage(likedPage + 1);
+  };
+
+  const hasMore = useMemo(() => {
+    if (searchQuery) {
+      return search.data?.search.total_pages > searchPage;
+    }
+    return likedImages.data?.getImages.total_pages > likedPage;
+  }, [
+    likedImages.data?.getImages.total_pages,
+    likedPage,
+    search.data?.search.total_pages,
+    searchPage,
+    searchQuery,
+  ]);
 
   return (
     <main className="container">
@@ -46,22 +79,15 @@ const Home: NextPage = () => {
           columnClassName="my-masonry-grid_column"
         >
           {renderImages()}
+          {hasMore && (
+            <div className={styles.hasMore}>
+              <button onClick={handleLoadMore}>load more</button>
+            </div>
+          )}
         </Masonry>
       </div>
     </main>
   );
 };
-
-// export const getServerSideProps: GetServerSideProps = withSSRGuest(async () => {
-//   const { data } = await client.query<GetImagesQuery, QueryGetImagesArgs>({
-//     query: GetImagesDocument,
-//   });
-//   console.log({ data });
-//   return {
-//     props: {
-//       images: data.getImages,
-//     },
-//   };
-// });
 
 export default Home;
