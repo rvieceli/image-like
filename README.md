@@ -7,6 +7,8 @@
 
 ## Start up
 
+- [ ] run `yarn` to install dependencies
+
 - [ ] create apps/api/.env from [.env.example](/apps/api/.env.example)
 
   > UNSPLASH_ACCESS_KEY is the only variable required
