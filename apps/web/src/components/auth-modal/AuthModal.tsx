@@ -72,13 +72,13 @@ export function AuthModal() {
           <div className={styles.links}>
             <a
               onClick={() => setIsRegister(false)}
-              className={!isRegister && styles.selected}
+              className={!isRegister ? styles.selected : undefined}
             >
               login
             </a>
             <a
               onClick={() => setIsRegister(true)}
-              className={isRegister && styles.selected}
+              className={isRegister ? styles.selected : undefined}
             >
               register
             </a>

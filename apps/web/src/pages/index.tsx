@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import type { NextPage } from 'next';
+import Link from 'next/link';
 
 import { useGetImagesQuery, useSearchQuery } from '@image-like/data-access';
 import Masonry from 'react-masonry-css';
@@ -18,8 +19,11 @@ const Home: NextPage = () => {
       query: searchQuery,
     },
     skip: !searchQuery,
+    fetchPolicy: 'cache-and-network',
   });
-  const likedImages = useGetImagesQuery();
+  const likedImages = useGetImagesQuery({
+    fetchPolicy: 'cache-and-network',
+  });
 
   const renderImages = () => {
     if (searchQuery) {
@@ -65,7 +69,11 @@ const Home: NextPage = () => {
 
   return (
     <main className="container">
-      <Header doSearch={setSearchQuery} />
+      <Header doSearch={setSearchQuery}>
+        <Link href="/liked">
+          <a>my stuff</a>
+        </Link>
+      </Header>
 
       <div>
         <Masonry

@@ -72,12 +72,18 @@ export type Query = {
   __typename?: 'Query';
   getImages: ImageSearchResult;
   me: User;
+  myImages: ImageSearchResult;
   ping: Scalars['String'];
   search: ImageSearchResult;
 };
 
 
 export type QueryGetImagesArgs = {
+  page?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryMyImagesArgs = {
   page?: InputMaybe<Scalars['Int']>;
 };
 
@@ -130,6 +136,13 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, name: string } };
+
+export type MyImagesQueryVariables = Exact<{
+  page?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type MyImagesQuery = { __typename?: 'Query', myImages: { __typename?: 'ImageSearchResult', total: number, total_pages: number, results: Array<{ __typename?: 'Image', id: string, author: string, url: string, link: string, height: number, width: number, likesCount?: number | null, likedBy: Array<{ __typename?: 'User', id: string, name: string }> }> } };
 
 export type RegisterMutationVariables = Exact<{
   data: RegisterInput;
@@ -318,6 +331,55 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const MyImagesDocument = gql`
+    query myImages($page: Int) {
+  myImages(page: $page) {
+    total
+    total_pages
+    results {
+      id
+      author
+      url
+      link
+      height
+      width
+      likesCount
+      likedBy {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useMyImagesQuery__
+ *
+ * To run a query within a React component, call `useMyImagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyImagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMyImagesQuery({
+ *   variables: {
+ *      page: // value for 'page'
+ *   },
+ * });
+ */
+export function useMyImagesQuery(baseOptions?: Apollo.QueryHookOptions<MyImagesQuery, MyImagesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MyImagesQuery, MyImagesQueryVariables>(MyImagesDocument, options);
+      }
+export function useMyImagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyImagesQuery, MyImagesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MyImagesQuery, MyImagesQueryVariables>(MyImagesDocument, options);
+        }
+export type MyImagesQueryHookResult = ReturnType<typeof useMyImagesQuery>;
+export type MyImagesLazyQueryHookResult = ReturnType<typeof useMyImagesLazyQuery>;
+export type MyImagesQueryResult = Apollo.QueryResult<MyImagesQuery, MyImagesQueryVariables>;
 export const RegisterDocument = gql`
     mutation register($data: RegisterInput!) {
   register(data: $data) {

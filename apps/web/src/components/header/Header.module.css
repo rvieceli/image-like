@@ -16,5 +16,8 @@
 
 .logged-in > span {
   text-transform: lowercase;
-  margin-right: 0.5rem;
+}
+
+.logged-in > button {
+  margin-left: 0.5rem;
 }

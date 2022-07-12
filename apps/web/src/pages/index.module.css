@@ -5,6 +5,15 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  /* height: 4rem; */
   background-color: lightgrey;
+}
+
+.title {
+  display: flex;
+  flex: 1;
+  align-items: center;
+}
+
+.title > h3 {
+  margin-right: 0.5rem;
 }

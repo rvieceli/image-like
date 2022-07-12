@@ -33,6 +33,7 @@ type ImageSearchResult {
 type Query {
   ping: String!
   me: User!
+  myImages(page: Int): ImageSearchResult!
   getImages(page: Int): ImageSearchResult!
   search(query: String!, page: Int): ImageSearchResult!
 }

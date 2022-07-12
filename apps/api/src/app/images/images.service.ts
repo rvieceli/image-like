@@ -15,10 +15,13 @@ export class ImagesService {
     private unsplashService: UnsplashService
   ) {}
 
-  async findAll(page = 1): Promise<ImageSearchResult> {
+  async findAll(page = 1, userId?: string): Promise<ImageSearchResult> {
     const [results, total] = await this.imagesRepository.findAndCount({
       take: PAGE_SIZE,
       skip: (page - 1) * PAGE_SIZE,
+      where: {
+        likes: userId ? { user: { id: userId } } : {},
+      },
     });
 
     return {

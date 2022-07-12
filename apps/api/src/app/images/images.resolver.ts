@@ -1,5 +1,6 @@
 import {
   Args,
+  Context,
   Int,
   Parent,
   Query,
@@ -14,6 +15,7 @@ import { LikesService } from '../likes/likes.service';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { User } from '../users/entities/user.entity';
+import { Request } from 'express';
 
 @Resolver(() => Image)
 export class ImagesResolver {
@@ -22,6 +24,15 @@ export class ImagesResolver {
     private imagesService: ImagesService,
     private likesService: LikesService
   ) {}
+
+  @Query(() => ImageSearchResult)
+  @UseGuards(JwtAuthGuard)
+  async myImages(
+    @Context('req') request: Request,
+    @Args('page', { type: () => Int, nullable: true }) page?: number
+  ): Promise<ImageSearchResult> {
+    return this.imagesService.findAll(page, request.user.id);
+  }
 
   @Query(() => ImageSearchResult)
   async getImages(
@@ -39,7 +50,6 @@ export class ImagesResolver {
   }
 
   @ResolveField(() => [User])
-  @UseGuards(JwtAuthGuard)
   async likedBy(@Parent() image: Image): Promise<User[]> {
     return this.likesService.likedBy(image.id);
   }
