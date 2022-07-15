@@ -13,3 +13,7 @@ generates:
       withHOC: false
       scalars:
         DateTime: string
+
+  libs/data-access/src/lib/generated/apollo-helpers.ts:
+    plugins:
+      - typescript-apollo-client-helpers

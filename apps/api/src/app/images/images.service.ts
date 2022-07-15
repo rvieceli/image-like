@@ -24,9 +24,13 @@ export class ImagesService {
       },
     });
 
+    const total_pages = Math.ceil(total / PAGE_SIZE);
+
     return {
       total,
-      total_pages: Math.ceil(total / PAGE_SIZE),
+      total_pages,
+      page,
+      hasMore: page < total_pages,
       results,
     };
   }

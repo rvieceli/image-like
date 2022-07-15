@@ -30,6 +30,8 @@ export type Image = {
 
 export type ImageSearchResult = {
   __typename?: 'ImageSearchResult';
+  hasMore: Scalars['Boolean'];
+  page: Scalars['Int'];
   results: Array<Image>;
   total: Scalars['Int'];
   total_pages: Scalars['Int'];
@@ -74,23 +76,17 @@ export type Query = {
   me: User;
   myImages: ImageSearchResult;
   ping: Scalars['String'];
-  search: ImageSearchResult;
 };
 
 
 export type QueryGetImagesArgs = {
   page?: InputMaybe<Scalars['Int']>;
+  q?: InputMaybe<Scalars['String']>;
 };
 
 
 export type QueryMyImagesArgs = {
   page?: InputMaybe<Scalars['Int']>;
-};
-
-
-export type QuerySearchArgs = {
-  page?: InputMaybe<Scalars['Int']>;
-  query: Scalars['String'];
 };
 
 export type RegisterInput = {
@@ -113,10 +109,11 @@ export type UserAuth = {
 
 export type GetImagesQueryVariables = Exact<{
   page?: InputMaybe<Scalars['Int']>;
+  q?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetImagesQuery = { __typename?: 'Query', getImages: { __typename?: 'ImageSearchResult', total: number, total_pages: number, results: Array<{ __typename?: 'Image', id: string, author: string, url: string, link: string, height: number, width: number, likesCount?: number | null, likedBy: Array<{ __typename?: 'User', id: string, name: string }> }> } };
+export type GetImagesQuery = { __typename?: 'Query', getImages: { __typename?: 'ImageSearchResult', total: number, total_pages: number, page: number, hasMore: boolean, results: Array<{ __typename?: 'Image', id: string, author: string, url: string, link: string, height: number, width: number, likesCount?: number | null, likedBy: Array<{ __typename?: 'User', id: string, name: string }> }> } };
 
 export type LikeMutationVariables = Exact<{
   imageId: Scalars['ID'];
@@ -142,7 +139,7 @@ export type MyImagesQueryVariables = Exact<{
 }>;
 
 
-export type MyImagesQuery = { __typename?: 'Query', myImages: { __typename?: 'ImageSearchResult', total: number, total_pages: number, results: Array<{ __typename?: 'Image', id: string, author: string, url: string, link: string, height: number, width: number, likesCount?: number | null, likedBy: Array<{ __typename?: 'User', id: string, name: string }> }> } };
+export type MyImagesQuery = { __typename?: 'Query', myImages: { __typename?: 'ImageSearchResult', total: number, total_pages: number, page: number, hasMore: boolean, results: Array<{ __typename?: 'Image', id: string, author: string, url: string, link: string, height: number, width: number, likesCount?: number | null, likedBy: Array<{ __typename?: 'User', id: string, name: string }> }> } };
 
 export type RegisterMutationVariables = Exact<{
   data: RegisterInput;
@@ -150,14 +147,6 @@ export type RegisterMutationVariables = Exact<{
 
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserAuth', token: string, user: { __typename?: 'User', id: string, name: string } } };
-
-export type SearchQueryVariables = Exact<{
-  query: Scalars['String'];
-  page?: InputMaybe<Scalars['Int']>;
-}>;
-
-
-export type SearchQuery = { __typename?: 'Query', search: { __typename?: 'ImageSearchResult', total: number, total_pages: number, results: Array<{ __typename?: 'Image', id: string, author: string, url: string, link: string, height: number, width: number, likesCount?: number | null, likedBy: Array<{ __typename?: 'User', id: string, name: string }> }> } };
 
 export type UnlikeMutationVariables = Exact<{
   imageId: Scalars['ID'];
@@ -168,10 +157,12 @@ export type UnlikeMutation = { __typename?: 'Mutation', unlike: { __typename?: '
 
 
 export const GetImagesDocument = gql`
-    query getImages($page: Int) {
-  getImages(page: $page) {
+    query getImages($page: Int, $q: String) {
+  getImages(page: $page, q: $q) {
     total
     total_pages
+    page
+    hasMore
     results {
       id
       author
@@ -202,6 +193,7 @@ export const GetImagesDocument = gql`
  * const { data, loading, error } = useGetImagesQuery({
  *   variables: {
  *      page: // value for 'page'
+ *      q: // value for 'q'
  *   },
  * });
  */
@@ -336,6 +328,8 @@ export const MyImagesDocument = gql`
   myImages(page: $page) {
     total
     total_pages
+    page
+    hasMore
     results {
       id
       author
@@ -417,56 +411,6 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
-export const SearchDocument = gql`
-    query search($query: String!, $page: Int) {
-  search(query: $query, page: $page) {
-    total
-    total_pages
-    results {
-      id
-      author
-      url
-      link
-      height
-      width
-      likesCount
-      likedBy {
-        id
-        name
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useSearchQuery__
- *
- * To run a query within a React component, call `useSearchQuery` and pass it any options that fit your needs.
- * When your component renders, `useSearchQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSearchQuery({
- *   variables: {
- *      query: // value for 'query'
- *      page: // value for 'page'
- *   },
- * });
- */
-export function useSearchQuery(baseOptions: Apollo.QueryHookOptions<SearchQuery, SearchQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SearchQuery, SearchQueryVariables>(SearchDocument, options);
-      }
-export function useSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchQuery, SearchQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SearchQuery, SearchQueryVariables>(SearchDocument, options);
-        }
-export type SearchQueryHookResult = ReturnType<typeof useSearchQuery>;
-export type SearchLazyQueryHookResult = ReturnType<typeof useSearchLazyQuery>;
-export type SearchQueryResult = Apollo.QueryResult<SearchQuery, SearchQueryVariables>;
 export const UnlikeDocument = gql`
     mutation unlike($imageId: ID!) {
   unlike(imageId: $imageId) {

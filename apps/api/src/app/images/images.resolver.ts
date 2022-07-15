@@ -36,17 +36,14 @@ export class ImagesResolver {
 
   @Query(() => ImageSearchResult)
   async getImages(
+    @Args('q', { type: () => String, nullable: true }) query: string,
     @Args('page', { type: () => Int, nullable: true }) page?: number
   ): Promise<ImageSearchResult> {
-    return this.imagesService.findAll(page);
-  }
+    if (query) {
+      return this.unsplashService.search(query, page);
+    }
 
-  @Query(() => ImageSearchResult)
-  async search(
-    @Args('query', { type: () => String }) query: string,
-    @Args('page', { type: () => Int, nullable: true }) page?: number
-  ): Promise<ImageSearchResult> {
-    return this.unsplashService.search(query, page);
+    return this.imagesService.findAll(page);
   }
 
   @ResolveField(() => [User])

@@ -7,7 +7,7 @@ import { UnsplashApi } from './unsplash.factory';
 export class UnsplashService {
   constructor(@Inject('UNSPLASH') private unsplash: UnsplashApi) {}
 
-  async search(query: string, page?: number): Promise<ImageSearchResult> {
+  async search(query: string, page = 1): Promise<ImageSearchResult> {
     const data = await this.unsplash.search.getPhotos({
       query,
       page,
@@ -19,6 +19,8 @@ export class UnsplashService {
     return {
       total,
       total_pages,
+      page,
+      hasMore: page < total_pages,
       results: results.map(this.mutate),
     };
   }

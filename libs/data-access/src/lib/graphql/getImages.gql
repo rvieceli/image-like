@@ -1,7 +1,9 @@
-query getImages($page: Int) {
-  getImages(page: $page) {
+query getImages($page: Int, $q: String) {
+  getImages(page: $page, q: $q) {
     total
     total_pages
+    page
+    hasMore
     results {
       id
       author

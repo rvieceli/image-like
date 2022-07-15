@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import type { NextPage } from 'next';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 import { useMyImagesQuery } from '@image-like/data-access';
 import Masonry from 'react-masonry-css';
@@ -12,6 +13,7 @@ import { useAuth } from '../contexts/Auth.context';
 import styles from './index.module.css';
 
 const Liked: NextPage = () => {
+  const { back } = useRouter();
   const { isAuthenticated } = useAuth();
   const [likedPage, setLikedPage] = useState(1);
   const likedImages = useMyImagesQuery({
@@ -38,9 +40,7 @@ const Liked: NextPage = () => {
         title={
           <div className={styles.title}>
             <h3>my stuff</h3>
-            <Link href="/">
-              <a>home</a>
-            </Link>
+            <button onClick={() => back()}>back</button>
           </div>
         }
       />

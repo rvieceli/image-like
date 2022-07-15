@@ -1,26 +1,45 @@
+import { useRouter } from 'next/router';
+
 import { useAuth } from '../../contexts/Auth.context';
 import styles from './Header.module.css';
 
 interface HeaderProps {
   children?: React.ReactNode;
   title?: React.ReactNode;
-  doSearch?: (searchTerm?: string) => void;
+  search?: boolean;
 }
 
-export const Header = ({ doSearch, title, children }: HeaderProps) => {
+export const Header = ({ search = false, title, children }: HeaderProps) => {
+  const { replace, query } = useRouter();
   const { isAuthenticated, user, signOut, openAuthModal } = useAuth();
 
   return (
     <header className={styles.container}>
       {title}
-      {doSearch && (
+      {search && (
         <form
           onSubmit={(ev) => {
             ev.preventDefault();
-            doSearch(ev.target[0].value);
+            const q = ev.target[0].value;
+
+            if (q) {
+              replace({
+                query: { q },
+              });
+            } else {
+              replace({
+                query: {},
+              });
+            }
           }}
         >
-          <input id="search" name="search" type="text" placeholder="search" />
+          <input
+            defaultValue={query.q}
+            id="search"
+            name="search"
+            type="text"
+            placeholder="search"
+          />
           <button type="submit">search</button>
         </form>
       )}

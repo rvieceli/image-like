@@ -27,6 +27,8 @@ type UserAuth {
 type ImageSearchResult {
   total: Int!
   total_pages: Int!
+  page: Int!
+  hasMore: Boolean!
   results: [Image!]!
 }
 
@@ -34,8 +36,7 @@ type Query {
   ping: String!
   me: User!
   myImages(page: Int): ImageSearchResult!
-  getImages(page: Int): ImageSearchResult!
-  search(query: String!, page: Int): ImageSearchResult!
+  getImages(q: String, page: Int): ImageSearchResult!
 }
 
 type Mutation {
